@@ -1,0 +1,73 @@
+[
+  {
+    "table": "tbl_Student",
+    "identifiers": [
+      {
+        "derived": false,
+        "question": "Question ID 1",
+        "col_name": "Student ID",
+        "escape_commas": false
+      }
+    ],
+    "cols": [
+      {
+        "question": "Question ID 3",
+        "col_name": "First Name, Last Name",
+        "escape_commas": false
+      },
+      {
+        "question": "Question ID 5",
+        "col_name": "Personal Phone Number",
+        "escape_commas": false
+      },
+      {
+        "question": "Question ID 6",
+        "col_name": "City, State",
+        "escape_commas": false
+      },
+      {
+        "question": "Question ID 7",
+        "col_name": "Country",
+        "escape_commas": false
+      },
+      {
+        "question": "Question ID 8",
+        "col_name": "graduation date",
+        "escape_commas": false
+      }
+    ]
+  },
+  {
+    "table": "tbl_HighSchool",
+    "identifiers": [
+      {
+        "derived": false,
+        "question": "Question ID 14",
+        "col_name": "HighSchoolName",
+        "cut_commas": [
+          1
+        ],
+        "escape_commas": false
+      }
+    ],
+    "cols": [
+    ]
+  },
+  {
+    "table": "tbl_StudentHighSchool",
+    "identifiers": [
+      {
+        "derived": false,
+        "question": "Question ID 1",
+        "col_name": "Student ID",
+        "escape_commas": false
+      },
+      {
+        "derived": true,
+        "question": "Question ID 1",
+        "col_name": "Student ID",
+        "escape_commas": false
+      }
+    ]
+  }
+]
