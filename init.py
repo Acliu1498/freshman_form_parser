@@ -14,7 +14,9 @@ def main(file):
             if type(value) is float:
                 value = int(value)
             form_response[sheet.cell_value(row, col)] = value
-        fill_config(form_response)
+        config = fill_config(form_response)
+        config = db_interactor.fill_derived(config)
+        db_interactor.update(config)
 
 
 def fill_config(form_response):
@@ -26,9 +28,13 @@ def fill_config(form_response):
             for identifier in entry["identifiers"]:
                 if not identifier["derived"]:
                     identifier["value"] = str(format_val(identifier, form_response))
+                else:
+                    for question in identifier['questions']:
+                        question['value'] = str(format_val(question, form_response))
+
             for col in entry["cols"]:
                 col["value"] = format_val(col, form_response)
-        db_interactor.update(config)
+        return config
 
 
 def format_val(col, form_response):

@@ -17,6 +17,14 @@ def update(config):
             cursor.commit()
 
 
+def fill_derived(config):
+    for entry in config:
+        for identifier in entry["identifiers"]:
+            if identifier['derived']:
+                identifier['value'] = get_derived(identifier)
+    return config
+
+
 def check_existing(entry):
     # first check if the entry exists already
     statement = 'SELECT * FROM ' + entry['table'] + ' WHERE \"'
@@ -27,6 +35,9 @@ def check_existing(entry):
             statement += identifier['value']
         else:
             statement += '\'' + identifier['value'] + '\''
+        statement += ' AND \"'
+    statement = statement[:len(statement) - 6]
+    print(statement)
     return cursor.execute(statement).fetchone() is None
 
 
@@ -61,8 +72,16 @@ def format_insert(entry):
     return statement
 
 
-def get_derived(identifier, entry):
-    stmt = 'SELECT ' + identifier['col'] + ' F'
+def get_derived(identifier):
+    stmt = 'SELECT ' + identifier['derv_col_name'] + ' FROM ' + identifier['table'] + ' WHERE \"'
+
+    for question in identifier['questions']:
+        stmt += question['col_name'] + '\" = \'' + question['value'] + '\' AND '
+    stmt = stmt[:len(stmt) - 5] + ';'
+
+    resp = cursor.execute(stmt)
+    id = str(resp.fetchone()[0])
+    return id
 
 
 # taken from https://stackoverflow.com/questions/40097590/detect-whether-a-python-string-is-a-number-or-a-letter/40097699

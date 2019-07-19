@@ -59,15 +59,24 @@
       {
         "derived": false,
         "question": "Question ID 1",
-        "col_name": "Student ID",
+        "col_name": "FKStudentID",
         "escape_commas": false
       },
       {
         "derived": true,
-        "question": "Question ID 1",
-        "col_name": "Student ID",
-        "escape_commas": false
+        "table": "tbl_HighSchool",
+        "questions":[{
+          "question":"Question ID 14",
+          "col_name":"HighSchoolName",
+          "escape_commas": false,
+          "cut_commas": [
+            1
+          ]
+        }],
+        "col_name": "FKHighSchoolID",
+        "derv_col_name": "HighSchoolID"
       }
-    ]
+    ],
+    "cols": []
   }
 ]
