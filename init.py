@@ -56,6 +56,3 @@ def format_val(col, form_response):
         val = re.sub(r'\'', "''", val)
         val = re.sub(r'\s*-\s*', " ", val)
     return val
-
-if __name__ == "__main__":
-    main("SurveryResults FA2018.xlsx")

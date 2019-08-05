@@ -1,5 +1,7 @@
 import pyodbc
 import re
+import os.path
+from os import path
 
 conn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\alexl\PycharmProjects\FreshmanFormReader\coe_database_empty.accdb;')
 cursor = conn.cursor()
@@ -10,7 +12,9 @@ def update(config):
     for entry in config:
         exists = check_existing(entry)
         # if it does no insert it
-        if exists:
+        if not exists:
+            if entry['save_new']:
+                save_new(entry)
             statement = format_insert(entry)
             print(statement)
             cursor.execute(statement)
@@ -38,7 +42,7 @@ def check_existing(entry):
         statement += ' AND \"'
     statement = statement[:len(statement) - 6]
     print(statement)
-    return cursor.execute(statement).fetchone() is None
+    return cursor.execute(statement).fetchone() is not None
 
 
 def format_insert(entry):
@@ -84,6 +88,12 @@ def get_derived(identifier):
     return id
 
 
+def save_new(entry):
+    f = open(entry['table'] + '_new_entries', "a+")
+    f.write(entry)
+    pass
+
+
 # taken from https://stackoverflow.com/questions/40097590/detect-whether-a-python-string-is-a-number-or-a-letter/40097699
 def is_num(n):
     try:
@@ -93,5 +103,3 @@ def is_num(n):
     except ValueError:
         return False
     return True
-
-

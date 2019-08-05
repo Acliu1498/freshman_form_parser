@@ -1,6 +1,7 @@
-[
-  {
+{
+  "tbl_Student": {
     "table": "tbl_Student",
+    "save_new": false,
     "identifiers": [
       {
         "derived": false,
@@ -37,11 +38,29 @@
       }
     ]
   },
-  {
+  "tbl_HighSchool": {
     "table": "tbl_HighSchool",
+    "save_new": true,
     "identifiers": [
       {
-        "derived": false,
+        "derived": true,
+        "table": "tbl_HighSchool",
+        "col_name": "HighSchoolID",
+        "derv_col_name": "HighSchoolID",
+        "questions": [
+          {
+            "question": "Question ID 14",
+            "col_name": "HighSchoolName",
+            "escape_commas": false,
+            "cut_commas": [
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "cols": [
+      {
         "question": "Question ID 14",
         "col_name": "HighSchoolName",
         "cut_commas": [
@@ -49,12 +68,11 @@
         ],
         "escape_commas": false
       }
-    ],
-    "cols": [
     ]
   },
-  {
+  "tbl_StudentHighSchool": {
     "table": "tbl_StudentHighSchool",
+    "save_new": true,
     "identifiers": [
       {
         "derived": false,
@@ -65,18 +83,20 @@
       {
         "derived": true,
         "table": "tbl_HighSchool",
-        "questions":[{
-          "question":"Question ID 14",
-          "col_name":"HighSchoolName",
-          "escape_commas": false,
-          "cut_commas": [
-            1
-          ]
-        }],
         "col_name": "FKHighSchoolID",
-        "derv_col_name": "HighSchoolID"
+        "derv_col_name": "HighSchoolID",
+        "questions": [
+          {
+            "question": "Question ID 14",
+            "col_name": "HighSchoolName",
+            "escape_commas": false,
+            "cut_commas": [
+              1
+            ]
+          }
+        ]
       }
     ],
     "cols": []
   }
-]
+}
