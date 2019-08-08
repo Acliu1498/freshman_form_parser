@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>536</width>
-    <height>198</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,23 +46,20 @@
       <x>230</x>
       <y>40</y>
       <width>251</width>
-      <height>80</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
      <property name="verticalSpacing">
-      <number>12</number>
+      <number>14</number>
      </property>
      <property name="topMargin">
       <number>9</number>
      </property>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit"/>
-     </item>
      <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="btn_select_config">
        <property name="text">
-        <string>Select Config File</string>
+        <string>Select Config</string>
        </property>
       </widget>
      </item>
@@ -74,7 +71,35 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="line_form_file">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="line_config_file">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="line_access_file">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="btn_select_access_file">
+       <property name="text">
+        <string>Select Access File</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

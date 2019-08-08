@@ -2,29 +2,41 @@ import xlrd
 import json
 import db_interactor
 import re
+import traceback
 
 
-def main(file):
-    wb = xlrd.open_workbook(file)
-    sheet = wb.sheet_by_index(0)
+def main(file, config_file, db_file):
+    try:
+        wb = xlrd.open_workbook(file)
+        sheet = wb.sheet_by_index(0)
+        begin_parse(sheet, config_file, db_file)
+
+    except Exception as e:
+        traceback.print_exc()
+        raise e
+
+
+def begin_parse(sheet, config_file, db_file):
+    db = db_interactor.DBInteractor(db_file)
     form_response = {}
     for row in range(1, sheet.nrows):
-        for col in range(0, sheet.ncols, 3 ):
+        for col in range(0, sheet.ncols, 3):
             value = sheet.cell_value(row, col + 2)
             if type(value) is float:
                 value = int(value)
             form_response[sheet.cell_value(row, col)] = value
-        config = fill_config(form_response)
-        config = db_interactor.fill_derived(config)
-        db_interactor.update(config)
+        config = fill_config(form_response, config_file)
+        config = db.fill_derived(config)
+        db.update(config)
 
 
-def fill_config(form_response):
-    with open('config.JSON') as config_data:
+def fill_config(form_response, config_file):
+    with open(config_file) as config_data:
         # loads config.JSON to map questions to cols
         config = json.load(config_data)
         # enter entry into map
-        for entry in config:
+        for key in config:
+            entry = config[key]
             for identifier in entry["identifiers"]:
                 if not identifier["derived"]:
                     identifier["value"] = str(format_val(identifier, form_response))
