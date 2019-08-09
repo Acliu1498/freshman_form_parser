@@ -5,19 +5,22 @@ import re
 import traceback
 
 
-def main(file, config_file, db_file):
+def main(file, config_file):
     try:
         wb = xlrd.open_workbook(file)
         sheet = wb.sheet_by_index(0)
-        begin_parse(sheet, config_file, db_file)
+        begin_parse(sheet, config_file)
 
     except Exception as e:
         traceback.print_exc()
         raise e
 
 
-def begin_parse(sheet, config_file, db_file):
-    db = db_interactor.DBInteractor(db_file)
+"""
+method to parse through the an excel sheet and add data to the database
+"""
+def begin_parse(sheet, config_file):
+    db = db_interactor.DBInteractor()
     form_response = {}
     for row in range(1, sheet.nrows):
         for col in range(0, sheet.ncols, 3):
@@ -26,10 +29,12 @@ def begin_parse(sheet, config_file, db_file):
                 value = int(value)
             form_response[sheet.cell_value(row, col)] = value
         config = fill_config(form_response, config_file)
-        config = db.fill_derived(config)
         db.update(config)
 
 
+"""
+helper method to fill the config with data from excel sheet
+"""
 def fill_config(form_response, config_file):
     with open(config_file) as config_data:
         # loads config.JSON to map questions to cols
@@ -37,6 +42,7 @@ def fill_config(form_response, config_file):
         # enter entry into map
         for key in config:
             entry = config[key]
+            # for each identifier check for derived identifiers
             for identifier in entry["identifiers"]:
                 if not identifier["derived"]:
                     identifier["value"] = str(format_val(identifier, form_response))
@@ -49,6 +55,9 @@ def fill_config(form_response, config_file):
         return config
 
 
+"""
+helper method to format any values to specified regexes
+"""
 def format_val(col, form_response):
     val = form_response[col["question"]]
     # if necessary set up commas to be escaped

@@ -1,8 +1,5 @@
 import json
 
-with open('config.JSON') as config_data:
-    config = json.load(config_data)
-
 def add_table():
     pass
 
@@ -16,8 +13,7 @@ def add_column():
 
 
 def get_existing_tables():
-
-    return config.keys()
+    pass
 
 
 def get_table(table):

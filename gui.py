@@ -1,14 +1,14 @@
-import sys
-import init
-import config_editor
-from PyQt5 import QtCore, QtGui, uic, QtWidgets
+from PyQt5 import QtCore, uic, QtWidgets
 
-# base off of this tutorial: https://www.pythonforengineers.com/your-first-gui-app-with-python-and-pyqt/
+import init, config_editor
+
 # UI generated uisng the Qt creator
+curr_dir = QtCore.QDir()
 
-qtMainWindow = "mainwindow.ui"
-qtEditWindow = "editwindow.ui"
-qtEditTableWindow = "edittablewindow.ui"
+
+qtMainWindow = "resources/ui/mainwindow.ui"
+qtEditWindow = "resources/ui/editwindow.ui"
+qtEditTableWindow = "resources/ui/edittablewindow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtMainWindow)
 Ui_EditWindow, QtEditClass = uic.loadUiType(qtEditWindow)
@@ -17,7 +17,6 @@ Ui_EditTableWindow, QtEditTableClass = uic.loadUiType(qtEditTableWindow)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     switch_edit_window = QtCore.pyqtSignal()
-    curr_dir = QtCore.QDir()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -27,14 +26,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.btn_go_to_edit_window.clicked.connect(self.edit_tables)
         self.btn_select_config.clicked.connect(self.select_config_file)
         self.btn_select_form.clicked.connect(self.select_form_file)
-        self.btn_select_access_file.clicked.connect(self.select_access_file)
 
         self.config_file = ""
         self.form_file = ""
-        self.access_file = ""
 
     def run_parsing(self):
-        if not self.form_file or not self.config_file or not self.access_file:
+        if not self.form_file or not self.config_file:
             msg_box = QtWidgets.QMessageBox()
             msg_box.setIcon(QtWidgets.QMessageBox.Warning)
 
@@ -45,7 +42,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.btn_begin_parse.setEnabled(False)
             try:
-                init.main(self.form_file, self.config_file, self.access_file)
+                init.main(self.form_file, self.config_file)
+                pass
             except Exception as e:
                 exception_throw()
 
@@ -63,17 +61,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.form_file = self.get_file("Excel (*.xlsx)")
         self.line_form_file.setText(self.form_file)
 
-    def select_access_file(self):
-        self.access_file = self.get_file("Access (*.mdb, *.accdb)")
-        self.line_access_file.setText(self.access_file)
-
     def get_file(self, file_type):
 
         file_dialog = QtWidgets.QFileDialog()
         filename = file_dialog.getOpenFileName(
             self,
             "Open Document",
-            self.curr_dir.currentPath(),
+            curr_dir.currentPath(),
             file_type
         )
 
@@ -84,6 +78,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         finished_msg_box.setIcon(QtWidgets.QMessageBox.Information)
         finished_msg_box.setText("Parsing Finished!")
         finished_msg_box.exec()
+
 
 class EditMainWindow(QtWidgets.QMainWindow, Ui_EditWindow):
     switch_edit_table_window = QtCore.pyqtSignal()
@@ -140,11 +135,3 @@ def exception_throw():
     exception_msg_box.setText("An error has occurred!")
     exception_msg_box.setInformativeText("Check log for details.")
     exception_msg_box.exec()
-
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    controller = MainController()
-    controller.show_main()
-    sys.exit(app.exec_())

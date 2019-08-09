@@ -1,39 +1,66 @@
 import pyodbc
 import re
-import os.path
-from os import path
+import os
+import json
 
 
 class DBInteractor():
 
-    def __init__(self, db_file):
-        conn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + db_file + ';')
+    def __init__(self):
+        import pyodbc
+        SQL_ATTR_CONNECTION_TIMEOUT = 113
+        login_timeout = 1
+        connection_timeout = 3
+        conn = pyodbc.connect(
+            r'Driver={ODBC Driver 17 for SQL Server};'
+            r'Server=localhost;'
+            r'Database=InternTest;'
+            r'Trusted_Connection=yes;',
+            timeout=login_timeout,
+            attrs_before={SQL_ATTR_CONNECTION_TIMEOUT: connection_timeout}
+        )
         self.cursor = conn.cursor()
-    # print(cursor.execute('INSERT INTO tbl_Student ([Student ID], [First Name], [Last Name], [Personal Phone Number], [City], [State], [Country], [graduation date]) VALUES (\'683329\', \'Gabriel\', \'Duenas\', "9097326387", "Pomona", "Ca", "USA", "FALL 2018");').fetchone())
 
+    """
+    method that updates database given a config
+    """
     def update(self, config):
+        # update db with each entry in the config
         for key in config:
             entry = config[key]
+            # fill in any derived entries
+            entry = self.fill_derived(entry)
             exists = self.check_existing(entry)
             # if it does no insert it
             if not exists:
-                if entry['save_new']:
-                    self.save_new(entry)
                 statement = self.format_insert(entry)
                 print(statement)
                 self.cursor.execute(statement)
                 self.cursor.commit()
+                if entry['save_new']:
+                    self.save_new(entry)
 
-    def fill_derived(self, config):
-        for key in config:
-            entry = config[key]
-            for identifier in entry["identifiers"]:
-                if identifier['derived']:
-                    identifier['value'] = self.get_derived(identifier)
-        return config
+    """
+    method to fill any derived identifiers
+    """
+    def fill_derived(self, entry):
+        for identifier in entry["identifiers"]:
+            if identifier['derived']:
+                id = self.get_derived(identifier)
+                identifier['value'] = id
+        return entry
 
+    """
+    method to check if an entry already exists in the database
+    """
     def check_existing(self, entry):
         # first check if the entry exists already
+        return self.select_entry(entry) is not None
+
+    """
+    helper method to get an entry form the database
+    """
+    def select_entry(self, entry):
         statement = 'SELECT * FROM ' + entry['table'] + ' WHERE \"'
         for identifier in entry["identifiers"]:
             statement += identifier['col_name'] + '\" = '
@@ -45,8 +72,11 @@ class DBInteractor():
             statement += ' AND \"'
         statement = statement[:len(statement) - 6]
         print(statement)
-        return self.cursor.execute(statement).fetchone() is not None
+        return self.cursor.execute(statement).fetchone()
 
+    """
+    helper method to format an insert statement
+    """
     def format_insert(self, entry):
         stmt_cols = 'INSERT INTO ' + entry['table'] + ' (['
         # adds identifier cols to stmt
@@ -84,13 +114,35 @@ class DBInteractor():
             stmt += question['col_name'] + '\" = \'' + question['value'] + '\' AND '
         stmt = stmt[:len(stmt) - 5] + ';'
 
-        resp = self.cursor.execute(stmt)
-        id = str(resp.fetchone()[0])
+        resp = self.cursor.execute(stmt).fetchone()
+        if resp:
+            id = str(resp[0])
+        else:
+            id = ""
         return id
 
     def save_new(self, entry):
-        f = open(entry['table'] + '_new_entries', "a+")
-        f.write(entry)
+        # creates if not exists a path for new entries
+        if not os.path.exists('New Entries'):
+            os.makedirs('New Entries')
+        # creates if not exists a file for new entries for specified table
+        if not os.path.exists('New Entries/' + entry['table'] + '_new_entries.JSON'):
+            f = open('New Entries/' + entry['table'] + '_new_entries.JSON', "a+")
+            f.write('[]')
+        # adds new entry to file
+        with open('New Entries/' + entry['table'] + '_new_entries.JSON') as new_entry_data:
+            try:
+                data = json.load(new_entry_data)
+            except ValueError:
+                data = []
+            data.append({
+                "table": entry['table'],
+                "id": str(self.select_entry(entry)[0]),
+                "value": str(entry['identifiers'][0]['value']),
+                "correct_id": -1
+            })
+            f = open('New Entries/' + entry['table'] + '_new_entries.JSON', "w")
+            f.write(json.dumps(data))
         pass
 
 

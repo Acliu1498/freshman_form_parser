@@ -43,36 +43,21 @@
     "save_new": true,
     "identifiers": [
       {
-        "derived": true,
-        "table": "tbl_HighSchool",
-        "col_name": "HighSchoolID",
-        "derv_col_name": "HighSchoolID",
-        "questions": [
-          {
-            "question": "Question ID 14",
-            "col_name": "HighSchoolName",
-            "escape_commas": false,
-            "cut_commas": [
-              1
-            ]
-          }
+        "derived": false,
+        "question": "Question ID 14",
+        "col_name": "HighSchoolName",
+        "escape_commas": false,
+        "cut_commas": [
+          1
         ]
       }
     ],
     "cols": [
-      {
-        "question": "Question ID 14",
-        "col_name": "HighSchoolName",
-        "cut_commas": [
-          1
-        ],
-        "escape_commas": false
-      }
     ]
   },
   "tbl_StudentHighSchool": {
     "table": "tbl_StudentHighSchool",
-    "save_new": true,
+    "save_new": false,
     "identifiers": [
       {
         "derived": false,
