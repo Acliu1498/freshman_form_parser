@@ -67,9 +67,6 @@
       },
       {
         "derived": true,
-        "table": "tbl_HighSchool",
-        "col_name": "FKHighSchoolID",
-        "derv_col_name": "HighSchoolID",
         "questions": [
           {
             "question": "Question ID 14",
@@ -79,7 +76,10 @@
               1
             ]
           }
-        ]
+        ],
+        "col_name": "FKHighSchoolID",
+        "table": "tbl_HighSchool",
+        "derv_col_name": "HighSchoolID"
       }
     ],
     "cols": []

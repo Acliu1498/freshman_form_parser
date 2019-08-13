@@ -5,11 +5,11 @@ import re
 import traceback
 
 
-def main(file, config_file):
+def main(file, config_file, cursor):
     try:
         wb = xlrd.open_workbook(file)
         sheet = wb.sheet_by_index(0)
-        begin_parse(sheet, config_file)
+        begin_parse(sheet, config_file, cursor)
 
     except Exception as e:
         traceback.print_exc()
@@ -19,8 +19,8 @@ def main(file, config_file):
 """
 method to parse through the an excel sheet and add data to the database
 """
-def begin_parse(sheet, config_file):
-    db = db_interactor.DBInteractor()
+def begin_parse(sheet, config_file, cursor):
+    db = db_interactor.DBInteractor(cursor)
     form_response = {}
     for row in range(1, sheet.nrows):
         for col in range(0, sheet.ncols, 3):

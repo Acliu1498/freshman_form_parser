@@ -2,24 +2,13 @@ import pyodbc
 import re
 import os
 import json
+import pyodbc
 
 
 class DBInteractor():
 
-    def __init__(self):
-        import pyodbc
-        SQL_ATTR_CONNECTION_TIMEOUT = 113
-        login_timeout = 1
-        connection_timeout = 3
-        conn = pyodbc.connect(
-            r'Driver={ODBC Driver 17 for SQL Server};'
-            r'Server=localhost;'
-            r'Database=InternTest;'
-            r'Trusted_Connection=yes;',
-            timeout=login_timeout,
-            attrs_before={SQL_ATTR_CONNECTION_TIMEOUT: connection_timeout}
-        )
-        self.cursor = conn.cursor()
+    def __init__(self, cursor):
+        self.cursor = cursor
 
     """
     method that updates database given a config
